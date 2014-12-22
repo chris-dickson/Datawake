@@ -49,9 +49,9 @@ pip install httplib2 &> /dev/null
 # install tangelo from sessions branch
 
 echo "installing tangelo from sessions branch"
-git clone https://github.com/Kitware/tangelo.git &> /dev/null
+git clone https://github.com/chris-dickson/tangelo.git &> /dev/null
 cd tangelo
-git checkout sessions
+git checkout v0.7
 cd ..
 mkdir tangelo-build
 cd tangelo-build
