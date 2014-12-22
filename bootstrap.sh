@@ -74,7 +74,10 @@ mv lein /usr/bin
 # install streamparse (from parse.ly)
 
 echo "installing streamparse"
-pip install streamparse &> /dev/null 
+pip install streamparse &> /dev/null
+
+echo "installing tldextract"
+pip install tldextract &> /dev/null
 
 
 
