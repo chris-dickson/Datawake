@@ -19,7 +19,7 @@ define([], function() {
 		 * Display a modal overlay with a loader
 		 * @private
 		 */
-		showLoader : function() {
+		showLoader : function(message) {
 			var overlay = $('<div/>')
 				.attr('id','ajax_loader_overlay')
 				.width(window.innerWidth)
@@ -27,17 +27,29 @@ define([], function() {
 				.addClass('ajax_loader_overlay')
 				.appendTo($(document.body));
 
-			var img = $('<img/>')
-				.attr('src','./img/ajax_loader.gif')
+			var container = $('<div/>')
 				.addClass('ajax_loader_image')
 				.appendTo(overlay);
 
-			var imgDim = parseInt(img.css('margin-left').replace('px',''))*-2;
+			var img = $('<img/>')
+				.attr('src','./img/ajax_loader.gif')
+				.addClass('ajax_loader_img')
+				.appendTo(container);
+
+			if (message) {
+				var msg = $('<div/>')
+					.addClass('ajax_loader_text')
+					.html(message);
+					//.appendTo(container);  // todo: fix
+			}
+
+			var imgDim = parseInt(container.css('margin-left').replace('px',''))*-2;
 			img.attr('width',imgDim);
 			img.attr('height',imgDim);
 
 			$(window).resize(function() {
 				overlay.width(window.innerWidth).height(window.innerHeight).css('top','0px');
+
 			});
 		},
 

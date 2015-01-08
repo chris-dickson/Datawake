@@ -5,6 +5,7 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="css/bootstrap-theme.css">
+        <link rel="stylesheet" type="text/css" href="css/daterangepicker-bs3.css" />
         <link rel="stylesheet/less" type="text/css" href="css/style.less">
 
         <!--TODO:  Include this with build -->
@@ -13,7 +14,9 @@
 
     <body>
         <div id="navbarContainer"></div>
-        <div id="graphContainer"></div>
+        <div id="graphContainer">
+            <div id="tooltip"></div>
+        </div>
         <div id="legendContainer"></div>
         <div class="modal fade" id="aboutForensic" tabindex="-1" role="dialog" aria-labelledby="aboutForensicLabel" aria-hidden="true"></div>
 
@@ -25,10 +28,12 @@
     <script src="src/extern/jquery-1.11.0.min.js"></script>
     <script src="src/extern/bootstrap.min.js"></script>
     <script src="src/extern/jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="src/extern/moment.js"></script>
     <script src="src/extern/less.min.js"></script>
     <script src="src/extern/tween.min.js"></script>
     <script src="src/extern/path.js"></script>
     <script src="src/extern/graph.js"></script>
+    <script type="text/javascript" src="src/extern/daterangepicker.js"></script>
     <script type="text/javascript" src="src/extern/handlebars-v1.3.0.js"></script>
     <script data-main="./src/main" src="src/extern/require.js"></script>
 </html>

@@ -51,16 +51,20 @@ define([], function() {
 		},
 		LABEL : {
 			FONT_FAMILY : '"Open Sans"',
-			FONT_HEIGHT : 20,
+			FONT_HEIGHT : 14,
+			HEADER_HEIGHT : 23,
 			FILL_STYLE : '#333',
 			SHADOW_COLOR : '#fff',
-			SHADOW_BLUR : 5
+			SHADOW_BLUR : 5,
+			INNER_FILL_STYLE : '#fff'
 		},
 		showLegendOnStart : true,
 		showLabelsOnStart : true,
 		fitPadding : 100, 				// padding around fit graph
 		layoutDuration : 750,			// in ms
 		layoutEasing : 'elastic-out',
-		useTestData : true
+		useTestData : true,
+		defaultStartDate : '2014-01-01',
+		defaultEndDate : moment().format('YYYY-MM-DD')
 	};
 });

@@ -32,6 +32,7 @@ canvas {
   z-index: 10000;
   background-color: #000000;
   opacity: 0.35;
+  color : white;
 }
 
 .ajax_loader_image {
@@ -40,6 +41,20 @@ canvas {
   left: 50%;
   margin-left: -@ajax-loader-size/2;
   margin-top: -@ajax-loader-size/2;
+}
+
+.ajax_loader_img {
+  position: absolute;;
+  left : 0px;
+  right : 0px;
+  margin : 0 auto;
+  width : @ajax-loader-size;
+  height : @ajax-loader-size;
+}
+
+.ajax_loader_text {
+  position: absolute;
+  top : -30px;
 }
 
 #legendContainer {
@@ -59,4 +74,16 @@ canvas {
 }
 .legend-item-text {
   top: -@legend-item-icon-size/2
+}
+
+.navbar-daterange {
+  margin-top: 12px;
+  margin-left: 12px;
+}
+
+.forensic-tooltip {
+  position: absolute;
+  background-color: rgba(230,210,65,0.7);
+  border-radius: 5px;
+  padding : 5px;
 }

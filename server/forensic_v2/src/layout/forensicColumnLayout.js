@@ -6,6 +6,7 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 		lineWidth : 1,
 		lineDash : [5,5]
 	});
+	var COLUMN_HEADER_TEXT = ['Browse Path','Extracted Content','Unexplored Pages'];
 
 	var NODE_PADDING = 5;
 
@@ -18,6 +19,8 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 		this._duration = ForensicConfig.layoutDuration;
 		this._easing = ForensicConfig.layoutEasing;
 		this._columnWidth = columnWidth;
+		this._rowDividers = [];
+		this._columnHeaders = [null,null,null];
 	};
 
 	ForensicColumnLayout.prototype = GraphJS.Extend(ForensicColumnLayout, GraphJS.Layout.prototype, {
@@ -35,6 +38,126 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 				}
 			}
 			return height;
+		},
+
+		prerender : function() {
+			var nodes = this.nodes();
+
+			this._rowDividers = [];
+
+			var renderObjects = [];
+			if (!nodes || nodes.length === 0) {
+				return renderObjects;
+			}
+
+			// Get the total number of rows
+			var maxRows = 0;
+			nodes.forEach(function(node) {
+				maxRows = Math.max(maxRows,node.row);
+			});
+			var rows = [];
+			for (var i = 0; i <= maxRows; i++) {
+				rows.push(i);
+				this._rowDividers.push({});
+			}
+
+			var that = this;
+			var totalBB = this.getBoundingBox(this._nodes);
+			var maxWidth = totalBB.width;
+			var minX = totalBB.x;
+			rows.forEach(function(row) {
+				var nodesInRow = nodes.filter(function(node) {
+					if (node.row === row) {
+						return true;
+					} else {
+						return false;
+					}
+				});
+				var bb = that.getBoundingBox(nodesInRow);
+				var backgroundObject = path.rect({
+					x : minX,
+					y : bb.y,
+					width : maxWidth,
+					height : bb.height,
+					fillStyle : COLUMN_STYLE.fillStyle,
+					strokeStyle : COLUMN_STYLE.strokeStyle,
+					lineDash : COLUMN_STYLE.lineDash,
+					lineWidth : COLUMN_STYLE.lineWidth,
+					opacity : 0.3
+				});
+				renderObjects.push(backgroundObject);
+				that._rowDividers[row] = backgroundObject;
+			});
+
+			return renderObjects;
+		},
+
+		postrender : function() {
+			var columnCenters = [null,null,null];
+			var renderObjects = [];
+			if (!this._nodes || this._nodes.length === 0) {
+				return renderObjects;
+			}
+
+			this._nodes.forEach(function(node) {
+				columnCenters[node.col] = node.x;
+			});
+
+			// Add column headers
+			var fontString = ForensicConfig.LABEL.HEADER_HEIGHT + 'px ' + ForensicConfig.LABEL.FONT_FAMILY;
+			var fillStyle = ForensicConfig.LABEL.FILL_STYLE;
+			var shadowColor = ForensicConfig.LABEL.SHADOW_COLOR;
+			var shadowBlur = ForensicConfig.LABEL.SHADOW_BLUR;
+
+			var that = this;
+			columnCenters.forEach(function(xLocation,index) {
+				var headerSpec = {
+					x : xLocation,
+					y : 50,
+					font: fontString,
+					fillStyle: fillStyle,
+					shadowColor : shadowColor,
+					shadowBlur : shadowBlur,
+					text : COLUMN_HEADER_TEXT[index],
+					textAlign : 'center'
+				};
+
+				var textHeaderObject = path.text(headerSpec);
+				that._columnHeaders[index] = textHeaderObject;
+				renderObjects.push(textHeaderObject);
+			});
+			return renderObjects;
+		},
+
+		postrenderUpdate : function(minx,miny,maxx,maxy) {
+
+			// Get the column centers
+			var columnCenters = [null,null,null];
+			var allSet = function() {
+				var ret = true;
+				columnCenters.forEach(function(c) {
+					ret &= (c!==null);
+				});
+				return ret;
+			};
+			for (var i = 0; i < this._nodes.length && !allSet(); i++) {
+				var node = this._nodes[i];
+				if (columnCenters[node.col] === null) {
+					columnCenters[node.col] = node.x;
+				}
+			}
+
+			var bb = this.getBoundingBox(this._nodes);
+
+			this._columnHeaders.forEach(function(textObject,i) {
+				if (columnCenters[i]) {
+					textObject.x = columnCenters[i];
+					textObject.y = bb.y - 40;
+				} else {
+					textObject.x = -100000;
+					textObject.y = -100000;
+				}
+			});
 		},
 
 		/**
@@ -90,6 +213,43 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 				top += rowHeight;
 			}
 			this._renderHeight = top;
+
+
+			// Animate backgrounds
+			var maxRows = 0;
+			this._nodes.forEach(function(node) {
+				maxRows = Math.max(maxRows,node.row);
+			});
+			var rows = [];
+			for (i = 0; i <= maxRows; i++) {
+				rows.push(i);
+			}
+
+			var totalBB = this.getBoundingBox(this._nodes);
+			var maxWidth = totalBB.width;
+			var minX = totalBB.x;
+			rows.forEach(function(row) {
+				var nodesInRow = that._nodes.filter(function(node) {
+					if (node.row === row) {
+						return true;
+					} else {
+						return false;
+					}
+				});
+				var bb = that.getBoundingBox(nodesInRow);
+				var backgroundObject = that._rowDividers[row];
+				backgroundObject.tweenAttr({
+					x : minX,
+					y : bb.y,
+					width : maxWidth,
+					height : bb.height
+				},{
+					duration : that._duration,
+					easing : that._easing
+				});
+
+			});
+
 			return false;
 		},
 
