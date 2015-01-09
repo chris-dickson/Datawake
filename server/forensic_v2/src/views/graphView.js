@@ -478,7 +478,7 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 
 
 				// If this website has links to email/phone entities, add it and create links to those entities
-				if (sourceEntityNodes.length > 0) {
+				if (sourceEntityNodes.length > 0 && browsePathNode.url !== entity.value) {
 					var node = $.extend(entity, {
 						x: 0,
 						y: 0,
