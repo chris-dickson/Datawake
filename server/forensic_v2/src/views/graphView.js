@@ -447,6 +447,11 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 	GraphView.prototype._getRelatedLinksGraph = function(response) {
 		var nodeIndex = this._browsePathComponents.nodes.length + this._entitiesComponents.nodes.length;
 
+		var browseUrlPathMap = {};
+		this._browsePathComponents.nodes.forEach(function(node) {
+			browseUrlPathMap[node.url] = true;
+		});
+
 		var nodes = [];
 		var links = [];
 		for (var i = 0; i < response.entities.length; i++) {
@@ -478,7 +483,7 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 
 
 				// If this website has links to email/phone entities, add it and create links to those entities
-				if (sourceEntityNodes.length > 0 && browsePathNode.url !== entity.value) {
+				if (sourceEntityNodes.length > 0 && !browseUrlPathMap[entity.value]) {
 					var node = $.extend(entity, {
 						x: 0,
 						y: 0,
