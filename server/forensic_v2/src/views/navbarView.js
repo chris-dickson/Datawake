@@ -30,12 +30,17 @@ define(['hbs!templates/navbar','../util/events', '../config/forensic_config'], f
 	NavbarView.prototype._initialize = function(element,context) {
 		this._canvas = $(navbarTemplate(context));
 		var inputsInDropdowns = this._canvas.find('.dropdown-menu > li > input');
+		var searchButtons = this._canvas.find('.search-controls-span > button');
 		var trailSearchElement = this._canvas.find('.trailSearchInput');
 		var trailSelectLinks = this._canvas.find('.trailSelectLink');
 		var trailSearchDropdownToggle = this._canvas.find('.trailSearchDropdown');
 
 		// Prevent dropdown from closing on input click
 		inputsInDropdowns.click(function(e) {
+			e.stopPropagation();
+		});
+
+		searchButtons.click(function(e) {
 			e.stopPropagation();
 		});
 
