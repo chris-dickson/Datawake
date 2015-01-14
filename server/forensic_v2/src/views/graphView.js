@@ -289,7 +289,7 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		var term = data.term;
 		var that = this;
 
-		if (term !== null) {
+		if (term !== null && this._originalResponse) {
 			this._getForensicGraph(this._originalResponse)
 			.then(
 				function(originalGraph) {
@@ -302,7 +302,7 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 					);
 				}
 			);
-		} else if (this._originalForensicGraph) {
+		} else if (this._originalResponse) {
 			this._getForensicGraph(this._originalResponse)
 			.then(
 				function(forensicGraph) {
