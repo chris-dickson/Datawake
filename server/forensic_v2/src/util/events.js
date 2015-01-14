@@ -55,6 +55,7 @@ define([], function() {
 		 */
 		topics: {
 			'TRAIL_CHANGE' 	: 'trail_change',
+			'SEARCH_CHANGE' : 'search_change',
 			'DATE_RANGE_CHANGE' : 'date_range_change',
 			'REFRESH' 		: 'refresh',
 			'FIT'			: 'fit',

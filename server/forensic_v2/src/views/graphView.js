@@ -18,6 +18,8 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._entitiesComponents = null;
 		this._entityValuesMap = null;
 		this._relatedLinksComponents = null;
+		this._originalForensicGraph = null;
+		this._originalResponse = null;
 		this._groupingManager = new ForensicGroupingManager();
 		this._initialize(element,context);
 	}
@@ -163,7 +165,9 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 				});
 			}
 		}
-		this._tooltipView.hide(250);
+		if (node.children) {
+			this._tooltipView.hide(250);
+		}
 		this._graph.update();
 	};
 
@@ -237,6 +241,7 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 			.then(
 				function(response) {
 					self._hideLoader();
+					self._originalResponse = response;
 					return self._getForensicGraph(response);
 				},
 				function(error) {
@@ -264,13 +269,6 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 	},
 
 	/**
-	 * Trims the graph to show only connected components
-	 */
-	GraphView.prototype._onTrim = function() {
-
-	},
-
-	/**
 	 * Fits the graph to the screen
 	 * @private
 	 */
@@ -287,6 +285,33 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._graph.update();
 	};
 
+	GraphView.prototype._onSearchChange = function(data) {
+		var term = data.term;
+		var that = this;
+
+		if (term !== null && this._originalResponse) {
+			this._getForensicGraph(this._originalResponse)
+			.then(
+				function(originalGraph) {
+					that._originalForensicGraph = originalGraph;
+					that._filterForensicGraph(term)
+						.then(
+						function(forensicGraph) {
+							that._renderForensicGraph(forensicGraph);
+						}
+					);
+				}
+			);
+		} else if (this._originalResponse) {
+			this._getForensicGraph(this._originalResponse)
+			.then(
+				function(forensicGraph) {
+					that._renderForensicGraph(forensicGraph);
+				}
+			);
+		}
+	};
+
 	/**
 	 * Adds any event handlers for custom message passing
 	 * @private
@@ -296,6 +321,7 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		events.subscribe(events.topics.REFRESH, this._onRefresh, this);
 		events.subscribe(events.topics.FIT,this._onFit,this);
 		events.subscribe(events.topics.TOGGLE_LABELS,this._onToggleLabels,this);
+		events.subscribe(events.topics.SEARCH_CHANGE,this._onSearchChange,this);
 	};
 
 	/**
@@ -543,6 +569,46 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		});
 	};
 
+	GraphView.prototype._filterForensicGraph = function(term) {
+		var d = new $.Deferred();
+
+		term = term.toLowerCase();
+
+		var nodes = this._originalForensicGraph.nodes;
+		var links = this._originalForensicGraph.links;
+
+		var filteredNodeMap = {};
+		var filteredNodes = nodes.filter(function(node) {
+			if (node.labelText && node.labelText.toLowerCase().indexOf(term) !== -1) {
+				filteredNodeMap[node.index] = true;
+				return node;
+			}
+		});
+
+		var adjacentNodeMap = {};
+		var filteredLinks = links.filter(function(link) {
+			if (filteredNodeMap[link.source.index]) {
+				adjacentNodeMap[link.target.index] = link.target;
+				return link;
+			} else if (filteredNodeMap[link.target.index]) {
+				adjacentNodeMap[link.source.index] = link.source;
+				return link;
+			}
+		});
+
+		for (var nodeIndex in adjacentNodeMap) {
+			if (adjacentNodeMap.hasOwnProperty(nodeIndex) && !filteredNodeMap[nodeIndex]) {
+				filteredNodes.push(adjacentNodeMap[nodeIndex]);
+				filteredNodeMap[nodeIndex] = true;
+			}
+		}
+
+		return d.resolve({
+			nodes : filteredNodes,
+			links : filteredLinks
+		});
+	};
+
 	/**
 	 * Renders graph contained in forensicGraph to graphInstance
 	 * @param forensicGraph - an object containing nodes and links in a format that graph.js can draw
@@ -557,10 +623,12 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._graph
 			.clear()
 			.nodes(forensicGraph.nodes)
-			.links(forensicGraph.links)
+			.links(forensicGraph.links);
+		this._graph
 			.initializeGrouping()
 			.layouter(this._layouter)
-			.draw()
+			.draw();
+		this._graph
 			.layout(onLayoutFinished)
 			.fit();
 	};
