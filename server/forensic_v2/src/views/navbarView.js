@@ -108,6 +108,26 @@ define(['hbs!templates/navbar','../util/events', '../config/forensic_config'], f
 			events.publish(events.topics.TOGGLE_LABELS);
 		});
 
+		var that = this;
+		this._canvas.find('.search-apply').click(function() {
+			// TODO
+			var term = that._canvas.find('.search-input').val();
+			if (term === '') {
+				term = null;
+			}
+			events.publish(events.topics.SEARCH_CHANGE,{
+				term : term
+			});
+		});
+
+		this._canvas.find('.search-clear').click(function() {
+			that._canvas.find('.search-input').val('');
+			events.publish(events.topics.SEARCH_CHANGE,{
+				term : null
+			});
+			that._canvas.find('.dropdown.open .dropdown-toggle').dropdown('toggle');
+		});
+
 
 		this._canvas.find('.aboutLink').click(function() {
 			$('.modal').show();
