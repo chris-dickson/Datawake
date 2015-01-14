@@ -30,12 +30,17 @@ define(['hbs!templates/navbar','../util/events', '../config/forensic_config'], f
 	NavbarView.prototype._initialize = function(element,context) {
 		this._canvas = $(navbarTemplate(context));
 		var inputsInDropdowns = this._canvas.find('.dropdown-menu > li > input');
+		var searchButtons = this._canvas.find('.search-controls-span > button');
 		var trailSearchElement = this._canvas.find('.trailSearchInput');
 		var trailSelectLinks = this._canvas.find('.trailSelectLink');
 		var trailSearchDropdownToggle = this._canvas.find('.trailSearchDropdown');
 
 		// Prevent dropdown from closing on input click
 		inputsInDropdowns.click(function(e) {
+			e.stopPropagation();
+		});
+
+		searchButtons.click(function(e) {
 			e.stopPropagation();
 		});
 
@@ -101,6 +106,26 @@ define(['hbs!templates/navbar','../util/events', '../config/forensic_config'], f
 
 		this._canvas.find('.toggleLabelsLink').click(function() {
 			events.publish(events.topics.TOGGLE_LABELS);
+		});
+
+		var that = this;
+		this._canvas.find('.search-apply').click(function() {
+			// TODO
+			var term = that._canvas.find('.search-input').val();
+			if (term === '') {
+				term = null;
+			}
+			events.publish(events.topics.SEARCH_CHANGE,{
+				term : term
+			});
+		});
+
+		this._canvas.find('.search-clear').click(function() {
+			that._canvas.find('.search-input').val('');
+			events.publish(events.topics.SEARCH_CHANGE,{
+				term : null
+			});
+			that._canvas.find('.dropdown.open .dropdown-toggle').dropdown('toggle');
 		});
 
 
