@@ -150,6 +150,9 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 			var bb = this.getBoundingBox(this._nodes);
 
 			this._columnHeaders.forEach(function(textObject,i) {
+				if (!textObject) {
+					return;
+				}
 				if (columnCenters[i]) {
 					textObject.x = columnCenters[i];
 					textObject.y = bb.y - 40;
@@ -236,6 +239,9 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 						return false;
 					}
 				});
+				if (!nodesInRow || nodesInRow.length === 0) {
+					return;
+				}
 				var bb = that.getBoundingBox(nodesInRow);
 				var backgroundObject = that._rowDividers[row];
 				backgroundObject.tweenAttr({

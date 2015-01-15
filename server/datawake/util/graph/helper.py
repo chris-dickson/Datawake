@@ -187,6 +187,7 @@ def getOculusForensicGraph(org,startdate,enddate,userlist=[],trail='*',domain=''
     startMillis = int(round(time.time() * 1000))
     entityDataConnector.close()
     org = org.upper()
+    if trail is None or trail.strip() == '': trail = "default"
 
     command = """
       SELECT id,unix_timestamp(ts) as ts,url
@@ -239,6 +240,17 @@ def getOculusForensicGraph(org,startdate,enddate,userlist=[],trail='*',domain=''
     for row in db_rows:
         (id,ts,url) = row
         #tangelo.log("URL: "+url)
+
+        if id not in browsePath:
+            ext = tldextract.extract(url)
+            browsePath[id] = {'id':id,
+                          'url':url,
+                          'timestamp':ts,
+                          'subdomain':ext.subdomain,
+                          'domain':ext.domain,
+                          'suffix':ext.suffix
+            }
+
         if url not in extracted_features:
             #tangelo.log("skipping url: "+url)
             continue
@@ -249,17 +261,6 @@ def getOculusForensicGraph(org,startdate,enddate,userlist=[],trail='*',domain=''
             #tangelo.log("\tENTITY TYPE: "+entity_type)
             for entity_value in entity_values:
                 #tangelo.log("\t\tENTITY VALUE: "+entity_value)
-                if trail is None or trail.strip() == '': trail = "default"
-
-                if id not in browsePath:
-                    ext = tldextract.extract(url)
-                    browsePath[id] = {'id':id,
-                              'url':url,
-                              'timestamp':ts,
-                              'subdomain':ext.subdomain,
-                              'domain':ext.domain,
-                              'suffix':ext.suffix
-                    }
 
                 entity = {
                     'id':id,
@@ -309,6 +310,7 @@ def getOculusForensicGraph(org,startdate,enddate,userlist=[],trail='*',domain=''
     entityDataConnector.close()
     endMillis = int(round(time.time() * 1000))
     # tangelo.log('Processing time = ' + str((endMillis-startMillis)/1000) + 's');
+
     return {
         'browsePath':browsePath,
         'entities':entities,
