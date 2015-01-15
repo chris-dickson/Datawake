@@ -285,6 +285,12 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._graph.update();
 	};
 
+	GraphView.prototype._onExport = function() {
+		var imgURI = this._graph.toImageURI();
+		var win = window.open(imgURI, '_blank');
+		win.focus();
+	};
+
 	GraphView.prototype._onSearchChange = function(data) {
 		var term = data.term;
 		var that = this;
@@ -322,6 +328,7 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		events.subscribe(events.topics.FIT,this._onFit,this);
 		events.subscribe(events.topics.TOGGLE_LABELS,this._onToggleLabels,this);
 		events.subscribe(events.topics.SEARCH_CHANGE,this._onSearchChange,this);
+		events.subscribe(events.topics.EXPORT,this._onExport,this);
 	};
 
 	/**
