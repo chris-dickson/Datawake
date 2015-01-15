@@ -96,6 +96,10 @@ define(['hbs!templates/navbar','../util/events', '../config/forensic_config'], f
 			events.publish(events.topics.FIT);
 		});
 
+		this._canvas.find('.exportBtn').click(function() {
+			events.publish(events.topics.EXPORT);
+		});
+
 		this._canvas.find('.refreshAllBtn').click(function() {
 			events.publish(events.topics.REFRESH);
 		});
