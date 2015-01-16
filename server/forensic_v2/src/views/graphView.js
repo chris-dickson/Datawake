@@ -286,9 +286,14 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 	};
 
 	GraphView.prototype._onExport = function() {
-		var imgURI = this._graph.toImageURI();
-		var win = window.open(imgURI, '_blank');
-		win.focus();
+		this._showLoader();
+		var that = this;
+		this._graph.toImageURI()
+		.then(function(imgURI) {
+			that._hideLoader();
+			var win = window.open(imgURI, '_blank');
+			win.focus();
+		});
 	};
 
 	GraphView.prototype._onSearchChange = function(data) {
@@ -630,12 +635,10 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._graph
 			.clear()
 			.nodes(forensicGraph.nodes)
-			.links(forensicGraph.links);
-		this._graph
+			.links(forensicGraph.links)
 			.initializeGrouping()
 			.layouter(this._layouter)
-			.draw();
-		this._graph
+			.draw()
 			.layout(onLayoutFinished)
 			.fit();
 	};
