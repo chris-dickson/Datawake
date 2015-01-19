@@ -21,6 +21,7 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 		this._columnWidth = columnWidth;
 		this._rowDividers = [];
 		this._columnHeaders = [null,null,null];
+		this._whiteoutBar = null;
 	};
 
 	ForensicColumnLayout.prototype = GraphJS.Extend(ForensicColumnLayout, GraphJS.Layout.prototype, {
@@ -99,6 +100,15 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 				return renderObjects;
 			}
 
+			this._whiteoutBar = path.rect({
+				x : 0,
+				y : 0,
+				width : 1,
+				height : 1,
+				fillStyle : '#fbfbfb'
+			});
+			renderObjects.push(this._whiteoutBar);
+
 			this._nodes.forEach(function(node) {
 				columnCenters[node.col] = node.x;
 			});
@@ -126,6 +136,7 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 				that._columnHeaders[index] = textHeaderObject;
 				renderObjects.push(textHeaderObject);
 			});
+
 			return renderObjects;
 		},
 
@@ -149,15 +160,26 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 
 			var bb = this.getBoundingBox(this._nodes);
 
+			var minTextY = Number.MAX_VALUE, maxTextY = -Number.MIN_VALUE;
+			var that =  this;
 			this._columnHeaders.forEach(function(textObject,i) {
 				if (columnCenters[i]) {
 					textObject.x = columnCenters[i];
-					textObject.y = bb.y - 40;
+					textObject.y = Math.min(Math.max(miny + 40, bb.y-40),bb.y + bb.height + 40);
+
+					var textMeasurements = that._scene.measure(textObject);
+					minTextY = Math.min(minTextY,textObject.y);
+					maxTextY = Math.max(maxTextY,textObject.y + textMeasurements.height);
 				} else {
 					textObject.x = -100000;
 					textObject.y = -100000;
 				}
 			});
+
+			this._whiteoutBar.x = minx;
+			this._whiteoutBar.y = Math.min(minTextY - (maxTextY-minTextY),miny);
+			this._whiteoutBar.width = (maxx - minx) || 1;
+			this._whiteoutBar.height = Math.max((maxTextY - minTextY) + 10,maxTextY-miny);
 		},
 
 		/**
