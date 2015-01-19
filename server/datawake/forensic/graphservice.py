@@ -17,6 +17,8 @@ limitations under the License.
 """
 
 import json
+import base64
+import os
 
 import tangelo
 
@@ -88,7 +90,18 @@ def listUsers():
     org = helper.get_org()
     return json.dumps(datawake_mysql.getActiveUsers(org))
 
-
+@is_in_session
+def downloadGraphImage(uri):
+    basePath = '/usr/local/share/tangelo/web/forensic_v2/'
+    imgDirectory = 'img/exported/'
+    #tangelo.log(uri)
+    filename = "exported_graph.png" #todo: generate this
+    absPath = basePath + imgDirectory + filename
+    relPath = imgDirectory + filename
+    f = open(absPath,"w+")
+    f.write(base64.b64decode(uri + '=' * (-len(uri) % 4)))
+    f.close
+    return json.dumps(dict(url=relPath,filename=filename))
 
 @is_in_session
 def getGraph(name, startdate=u'', enddate=u'', users=u'', trail=u'*', domain=u''):
@@ -147,6 +160,7 @@ get_actions = {
 post_actions = {
     'timewindow': getTimeWindow,
     'get': getGraph,
+    'download': downloadGraphImage,
 }
 
 
