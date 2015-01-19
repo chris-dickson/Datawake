@@ -285,10 +285,11 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._graph.update();
 	};
 
-	GraphView.prototype._onExport = function() {
+	GraphView.prototype._onExport = function(data) {
+		var bVisible = data && data.visible;
 		this._showLoader();
 		var that = this;
-		this._graph.toImageURI()
+		this._graph.toImageURI(bVisible)
 		.then(function(imgURI) {
 			that._hideLoader();
 

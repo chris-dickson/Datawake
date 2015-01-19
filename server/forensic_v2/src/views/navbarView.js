@@ -100,6 +100,12 @@ define(['hbs!templates/navbar','../util/events', '../config/forensic_config'], f
 			events.publish(events.topics.EXPORT);
 		});
 
+		this._canvas.find('.exportVisibleBtn').click(function() {
+			events.publish(events.topics.EXPORT,{
+				visible : true
+			});
+		});
+
 		this._canvas.find('.refreshAllBtn').click(function() {
 			events.publish(events.topics.REFRESH);
 		});
