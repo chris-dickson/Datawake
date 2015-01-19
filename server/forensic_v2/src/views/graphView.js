@@ -1,4 +1,4 @@
-define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/testData', '../layout/forensicColumnLayout', '../grouping/forensicGroupingManager', '../config/forensic_config', '../util/util', './tooltipView'], function(graphTemplate,events,TrailGraphService,testData,ForensicColumnLayout,ForensicGroupingManager,ForensicConfig,_,TooltipView) {
+define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/testData', '../layout/forensicColumnLayout', '../grouping/forensicGroupingManager', '../config/forensic_config', '../util/util', './tooltipView', '../rest/downloadGraph'], function(graphTemplate,events,TrailGraphService,testData,ForensicColumnLayout,ForensicGroupingManager,ForensicConfig,_,TooltipView,DownloadGraph) {
 
 
 	/**
@@ -291,8 +291,18 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._graph.toImageURI()
 		.then(function(imgURI) {
 			that._hideLoader();
-			var win = window.open(imgURI, '_blank');
-			win.focus();
+
+			imgURI = imgURI.substr('data:image/png;base64,'.length);
+			DownloadGraph.post(imgURI)
+			.then(
+				function(resp) {
+					var win = window.open(resp.url, '_blank');
+					win.focus();
+				},
+				function(err) {
+					//TODO:  something useful
+				}
+			);
 		});
 	};
 
