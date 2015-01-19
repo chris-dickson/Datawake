@@ -299,9 +299,6 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 				function(resp) {
 					var win = window.open(resp.url, '_blank');
 					win.focus();
-				},
-				function(err) {
-					//TODO:  something useful
 				}
 			);
 		});
