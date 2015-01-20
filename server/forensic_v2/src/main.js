@@ -43,7 +43,9 @@ require(['config','config/forensic_config','views/navbarView', 'views/graphView'
 
 
 			if (ForensicConfig.useTestData) {
+				_.showLoader('Requesting trails');
 				TrailsService.get().then(function(trails) {
+					_.hideLoader();
 					_navbarView = new NavbarView($('#navbarContainer'),{
 						trails:trails
 					});
@@ -52,7 +54,7 @@ require(['config','config/forensic_config','views/navbarView', 'views/graphView'
 					_aboutView = new AboutView($('#aboutForensic'));
 				});
 			} else {
-
+				_.showLoader('Starting session');
 				if (!useGoogleAuth) {
 					AuthHelper.onSignInCallback({'access_token': '123456'});
 				} else {

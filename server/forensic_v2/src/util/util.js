@@ -39,8 +39,8 @@ define([], function() {
 			if (message) {
 				var msg = $('<div/>')
 					.addClass('ajax_loader_text')
-					.html(message);
-					//.appendTo(container);  // todo: fix
+					.html(message)
+					.appendTo(container);
 			}
 
 			var imgDim = parseInt(container.css('margin-left').replace('px',''))*-2;
