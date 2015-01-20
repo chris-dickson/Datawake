@@ -125,7 +125,7 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 			columnCenters.forEach(function(xLocation,index) {
 				var headerSpec = {
 					x : xLocation,
-					y : 50,
+					y : 0,
 					font: fontString,
 					fillStyle: fillStyle,
 					shadowColor : shadowColor,
@@ -142,7 +142,11 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 			return renderObjects;
 		},
 
-		postrenderUpdate : function(minx,miny,maxx,maxy) {
+		postrenderUpdate : function() {
+
+			var minx = -this._scene.x;
+			var miny = -this._scene.y;
+			var maxx = minx + this._scene.width;
 
 			// Get the column centers
 			var columnCenters = [null,null,null];
@@ -169,6 +173,7 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 					textObject.x = columnCenters[i];
 
 					if (!that._scene.isExport) {
+						console.log('miny : ' + miny + ', bb.y : ' + bb.y + ', bb.height: ' + bb.height);
 						textObject.y = Math.min(Math.max(miny + 40, bb.y - 40), bb.y + bb.height + 40);
 					} else {
 						textObject.y = bb.y - 40;
