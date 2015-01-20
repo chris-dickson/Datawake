@@ -173,7 +173,6 @@ define(['../util/util', '../config/forensic_config'],function(_,ForensicConfig) 
 					textObject.x = columnCenters[i];
 
 					if (!that._scene.isExport) {
-						console.log('miny : ' + miny + ', bb.y : ' + bb.y + ', bb.height: ' + bb.height);
 						textObject.y = Math.min(Math.max(miny + 40, bb.y - 40), bb.y + bb.height + 40);
 					} else {
 						textObject.y = bb.y - 40;
