@@ -9,6 +9,7 @@ define(['hbs!templates/navbar','../util/events', '../config/forensic_config'], f
 	function NavbarView(element,context) {
 		this._canvas = null;
 		this._daterange = null;
+		context['isDev'] = !ForensicConfig.useTestData;
 		this._initialize(element,context);
 	}
 
@@ -94,6 +95,16 @@ define(['hbs!templates/navbar','../util/events', '../config/forensic_config'], f
 
 		this._canvas.find('.fitBtn').click(function() {
 			events.publish(events.topics.FIT);
+		});
+
+		this._canvas.find('.exportBtn').click(function() {
+			events.publish(events.topics.EXPORT);
+		});
+
+		this._canvas.find('.exportVisibleBtn').click(function() {
+			events.publish(events.topics.EXPORT,{
+				visible : true
+			});
 		});
 
 		this._canvas.find('.refreshAllBtn').click(function() {

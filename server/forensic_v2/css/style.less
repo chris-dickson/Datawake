@@ -1,7 +1,7 @@
 @import "bootstrap.css";
 
 @background-color : #fbfbfb;
-@ajax-loader-size : 100px;
+@ajax-loader-size : 80px;
 
 body {
   font-family: "open sans";
@@ -37,10 +37,14 @@ canvas {
 
 .ajax_loader_image {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-left: -@ajax-loader-size/2;
-  margin-top: -@ajax-loader-size/2;
+  width: 3*@ajax-loader-size;
+  max-width: 500px;
+  margin: auto auto;
+  height: @ajax-loader-size;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
 }
 
 .ajax_loader_img {
@@ -54,7 +58,11 @@ canvas {
 
 .ajax_loader_text {
   position: absolute;
-  top : -30px;
+  left: 0px;
+  right: 0px;
+  margin: 0 auto;
+  text-align: -webkit-center;
+  top: @ajax-loader-size + 10;
 }
 
 #legendContainer {

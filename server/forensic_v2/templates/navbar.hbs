@@ -30,6 +30,7 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
+                {{#if isDev}}
                 <li class="dropdown searchDropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -42,6 +43,14 @@
                         </li>
                     </ul>
                 </li>
+                <li class="dropdown exportDropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Export<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="exportBtn"><a class="exportLink" href="#">All</a></li>
+                        <li class="exportVisibleBtn"><a class="exportVisibleLink" href="#">Visible</a></li>
+                    </ul>
+                </li>
+                {{/if}}
                 <li class="fitBtn"><a class="fitLink" href="#">Fit</a></li>
                 <li class="refreshAllBtn"><a class='refreshAllLink' href="#">Refresh</a></li>
                 <li class="dropdown helpDropdown">

@@ -58,6 +58,7 @@ define([], function() {
 			'SEARCH_CHANGE' : 'search_change',
 			'DATE_RANGE_CHANGE' : 'date_range_change',
 			'REFRESH' 		: 'refresh',
+			'EXPORT'		: 'export',
 			'FIT'			: 'fit',
 			'TOGGLE_LEGEND' : 'toggle_legend',
 			'TOGGLE_LABELS' : 'toggle_labels',

@@ -1,4 +1,4 @@
-define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/testData', '../layout/forensicColumnLayout', '../grouping/forensicGroupingManager', '../config/forensic_config', '../util/util', './tooltipView'], function(graphTemplate,events,TrailGraphService,testData,ForensicColumnLayout,ForensicGroupingManager,ForensicConfig,_,TooltipView) {
+define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/testData', '../layout/forensicColumnLayout', '../grouping/forensicGroupingManager', '../config/forensic_config', '../util/util', './tooltipView', '../rest/downloadGraph'], function(graphTemplate,events,TrailGraphService,testData,ForensicColumnLayout,ForensicGroupingManager,ForensicConfig,_,TooltipView,DownloadGraph) {
 
 
 	/**
@@ -285,6 +285,30 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._graph.update();
 	};
 
+	GraphView.prototype._onExport = function(data) {
+		var bVisible = data && data.visible;
+		this._showLoader();
+		var that = this;
+		this._graph.toImageURI(bVisible)
+		.then(function(imgURI) {
+			that._hideLoader();
+
+			imgURI = imgURI.substr('data:image/png;base64,'.length);
+			DownloadGraph.post(imgURI)
+			.then(
+				function(resp) {
+					var link = $('<a/>')
+						.attr('href',resp.url)
+						.attr('title',resp.filename)
+						.attr('download',resp.filename)
+					link.html('Click me');
+					$(document.body).append(link);
+					link[0].click();
+				}
+			);
+		});
+	};
+
 	GraphView.prototype._onSearchChange = function(data) {
 		var term = data.term;
 		var that = this;
@@ -322,6 +346,7 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		events.subscribe(events.topics.FIT,this._onFit,this);
 		events.subscribe(events.topics.TOGGLE_LABELS,this._onToggleLabels,this);
 		events.subscribe(events.topics.SEARCH_CHANGE,this._onSearchChange,this);
+		events.subscribe(events.topics.EXPORT,this._onExport,this);
 	};
 
 	/**
@@ -623,12 +648,10 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 		this._graph
 			.clear()
 			.nodes(forensicGraph.nodes)
-			.links(forensicGraph.links);
-		this._graph
+			.links(forensicGraph.links)
 			.initializeGrouping()
 			.layouter(this._layouter)
-			.draw();
-		this._graph
+			.draw()
 			.layout(onLayoutFinished)
 			.fit();
 	};
