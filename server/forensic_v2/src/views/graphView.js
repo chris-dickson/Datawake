@@ -297,8 +297,13 @@ define(['hbs!templates/graph','../util/events', '../rest/trailGraph', '../util/t
 			DownloadGraph.post(imgURI)
 			.then(
 				function(resp) {
-					var win = window.open(resp.url, '_blank');
-					win.focus();
+					var link = $('<a/>')
+						.attr('href',resp.url)
+						.attr('title',resp.filename)
+						.attr('download',resp.filename)
+					link.html('Click me');
+					$(document.body).append(link);
+					link[0].click();
 				}
 			);
 		});
